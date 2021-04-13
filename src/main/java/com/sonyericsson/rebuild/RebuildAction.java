@@ -37,7 +37,6 @@ import hudson.matrix.MatrixRun;
 import hudson.model.BooleanParameterValue;
 import hudson.model.Cause;
 import hudson.model.CauseAction;
-import hudson.model.Item;
 import hudson.model.Job;
 import hudson.model.ParameterValue;
 import hudson.model.ParametersAction;
@@ -226,7 +225,7 @@ public class RebuildAction implements Action {
         if (project == null) {
             return;
         }
-        project.checkPermission(Item.BUILD);
+        project.checkPermission(RebuildPlugin.REBUILD);
         if (isRebuildAvailable()) {
 
             List<Action> actions = constructRebuildActions(build, currentBuild.getAction(ParametersAction.class));
@@ -247,7 +246,7 @@ public class RebuildAction implements Action {
      */
     public void nonParameterizedRebuild(Run currentBuild, StaplerResponse
             response) throws ServletException, IOException, InterruptedException {
-        getProject().checkPermission(Item.BUILD);
+        getProject().checkPermission(RebuildPlugin.REBUILD);
 
         List<Action> actions = constructRebuildActions(build, null);
         Jenkins.getInstance().getQueue().schedule2((Queue.Task) currentBuild.getParent(), 0, actions);
@@ -268,7 +267,7 @@ public class RebuildAction implements Action {
         if (project == null) {
             return;
         }
-        project.checkPermission(Item.BUILD);
+        project.checkPermission(RebuildPlugin.REBUILD);
         if (isRebuildAvailable()) {
             if (!req.getMethod().equals("POST")) {
                 // show the parameter entry form.
@@ -367,7 +366,7 @@ public class RebuildAction implements Action {
     public boolean isRebuildAvailable() {
         Job project = getProject();
         return project != null
-                && project.hasPermission(Item.BUILD)
+                && ( project.hasPermission(RebuildPlugin.REBUILD))
                 && project.isBuildable()
                 && project instanceof Queue.Task
                 && !isMatrixRun()
